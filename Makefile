@@ -1,5 +1,8 @@
 PLUGIN_NAME=orcinus/odorous
-PLUGIN_TAG=0.1.1
+
+ifndef
+	TAG=0.1.1
+endif
 
 all: clean docker rootfs create
 
@@ -29,15 +32,15 @@ rootfs:
 	docker rm -vf tmp
 
 create:
-	@echo "### remove existing plugin ${PLUGIN_NAME}:${PLUGIN_TAG} if exists"
-	docker plugin rm -f ${PLUGIN_NAME}:${PLUGIN_TAG} || true
-	@echo "### create new plugin ${PLUGIN_NAME}:${PLUGIN_TAG} from ./plugin"
-	docker plugin create ${PLUGIN_NAME}:${PLUGIN_TAG} ./plugin
+	@echo "### remove existing plugin ${PLUGIN_NAME}:${TAG} if exists"
+	docker plugin rm -f ${PLUGIN_NAME}:${TAG} || true
+	@echo "### create new plugin ${PLUGIN_NAME}:${TAG} from ./plugin"
+	docker plugin create ${PLUGIN_NAME}:${TAG} ./plugin
 
 enable:
-	@echo "### enable plugin ${PLUGIN_NAME}:${PLUGIN_TAG}"
-	docker plugin enable ${PLUGIN_NAME}:${PLUGIN_TAG}
+	@echo "### enable plugin ${PLUGIN_NAME}:${TAG}"
+	docker plugin enable ${PLUGIN_NAME}:${TAG}
 
 push:  clean docker rootfs create enable
-	@echo "### push plugin ${PLUGIN_NAME}:${PLUGIN_TAG}"
-	docker plugin push ${PLUGIN_NAME}:${PLUGIN_TAG}
+	@echo "### push plugin ${PLUGIN_NAME}:${TAG}"
+	docker plugin push ${PLUGIN_NAME}:${TAG}
