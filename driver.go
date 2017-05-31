@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/calavera/docker-volume-glusterfs/rest"
+	"github.com/orcinustools/odorous/rest"
 	"github.com/docker/go-plugins-helpers/volume"
 )
 
