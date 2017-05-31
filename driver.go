@@ -21,7 +21,7 @@ type volumeName struct {
 type glusterfsDriver struct {
 	root       string
 	restClient *rest.Client
-	servers    []string
+	statePath  []string
 	volumes    map[string]*volumeName
 	m          *sync.Mutex
 }
@@ -29,7 +29,7 @@ type glusterfsDriver struct {
 func newGlusterfsDriver(root, restAddress, gfsBase string, servers []string) glusterfsDriver {
 	d := glusterfsDriver{
 		root:    root,
-		servers: servers,
+		statePath: servers,
 		volumes: map[string]*volumeName{},
 		m:       &sync.Mutex{},
 	}
@@ -56,7 +56,7 @@ func (d glusterfsDriver) Create(r volume.Request) volume.Response {
 		}
 
 		if !exist {
-			if err := d.restClient.CreateVolume(r.Name, d.servers); err != nil {
+			if err := d.restClient.CreateVolume(r.Name, d.statePath); err != nil {
 				return volume.Response{Err: err.Error()}
 			}
 		}
@@ -87,7 +87,7 @@ func (d glusterfsDriver) Path(r volume.Request) volume.Response {
 	return volume.Response{Mountpoint: d.mountpoint(r.Name)}
 }
 
-func (d glusterfsDriver) Mount(r volume.Request) volume.Response {
+func (d glusterfsDriver) Mount(r volume.MountRequest) volume.Response {
 	d.m.Lock()
 	defer d.m.Unlock()
 	m := d.mountpoint(r.Name)
@@ -97,6 +97,7 @@ func (d glusterfsDriver) Mount(r volume.Request) volume.Response {
 	if ok && s.connections > 0 {
 		s.connections++
 		return volume.Response{Mountpoint: m}
+		// return volume.Response{Mountpoint: s.Mountpoint}
 	}
 
 	fi, err := os.Lstat(m)
@@ -120,9 +121,10 @@ func (d glusterfsDriver) Mount(r volume.Request) volume.Response {
 	d.volumes[m] = &volumeName{name: r.Name, connections: 1}
 
 	return volume.Response{Mountpoint: m}
+	// return volume.Response{Mountpoint: s.Mountpoint}
 }
 
-func (d glusterfsDriver) Unmount(r volume.Request) volume.Response {
+func (d glusterfsDriver) Unmount(r volume.UnmountRequest) volume.Response {
 	d.m.Lock()
 	defer d.m.Unlock()
 	m := d.mountpoint(r.Name)
@@ -169,7 +171,7 @@ func (d *glusterfsDriver) mountpoint(name string) string {
 
 func (d *glusterfsDriver) mountVolume(name, destination string) error {
 	var serverNodes []string
-	for _, server := range d.servers {
+	for _, server := range d.statePath {
 		serverNodes = append(serverNodes, fmt.Sprintf("-s %s", server))
 	}
 

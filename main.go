@@ -10,6 +10,7 @@ import (
 	"github.com/docker/go-plugins-helpers/volume"
 )
 
+const socketAddress = "/run/docker/plugins/odorous.sock"
 const glusterfsID = "_glusterfs"
 
 var (
@@ -35,6 +36,8 @@ func main() {
 	servers := strings.Split(*serversList, ":")
 
 	d := newGlusterfsDriver(*root, *restAddress, *gfsBase, servers)
+
 	h := volume.NewHandler(d)
-	fmt.Println(h.ServeUnix("root", "glusterfs"))
+	//fmt.Println(h.ServeUnix("root", "glusterfs"))
+	fmt.Println(h.ServeUnix(socketAddress, 0))
 }
