@@ -28,19 +28,6 @@ type glusterfsDriver struct {
 	m          *sync.Mutex
 }
 
-// func newGlusterfsDriver(root, restAddress, gfsBase string, servers []string) glusterfsDriver {
-// 	d := glusterfsDriver{
-// 		root:    root,
-// 		statePath: servers,
-// 		volumes: map[string]*volumeName{},
-// 		m:       &sync.Mutex{},
-// 	}
-// 	if len(restAddress) > 0 {
-// 		d.restClient = rest.NewClient(restAddress, gfsBase)
-// 	}
-// 	return d
-// }
-
 func newGlusterfsDriver(root string) glusterfsDriver {
 	d := glusterfsDriver{
 		root:    root,
@@ -61,7 +48,6 @@ func (d glusterfsDriver) Create(r volume.Request) volume.Response {
 		switch key {
 		case "servers":
 			servers := strings.Split(val, ":")
-			fmt.Println(servers)
 			d.statePath = servers
 		case "rest":
 			d.restAddress = val
@@ -128,7 +114,6 @@ func (d glusterfsDriver) Mount(r volume.MountRequest) volume.Response {
 	if ok && s.connections > 0 {
 		s.connections++
 		return volume.Response{Mountpoint: m}
-		// return volume.Response{Mountpoint: s.Mountpoint}
 	}
 
 	fi, err := os.Lstat(m)
@@ -152,7 +137,6 @@ func (d glusterfsDriver) Mount(r volume.MountRequest) volume.Response {
 	d.volumes[m] = &volumeName{name: r.Name, connections: 1}
 
 	return volume.Response{Mountpoint: m}
-	// return volume.Response{Mountpoint: s.Mountpoint}
 }
 
 func (d glusterfsDriver) Unmount(r volume.UnmountRequest) volume.Response {
