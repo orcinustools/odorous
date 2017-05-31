@@ -7,13 +7,13 @@
 1 - Install the plugin
 
 ```
-$ docker plugin install orcinus/odorous:0.1.1 # or docker plugin install vieux/sshfs DEBUG=1
+$ docker plugin install orcinus/odorous # or docker plugin install orcinus/odorous DEBUG=1
 ```
 
 2 - Create a volume
 
 ```
-$ docker volume create -d orcinus/odorous:0.1.1 -o servers=<List of glusterfs servers> [-o res=<URL to glusterfsrest api>] [-o source=<Base directory where volumes are created in the cluster>] glustervolume
+$ docker volume create -d orcinus/odorous -o servers=<List of glusterfs servers> [-o res=<URL to glusterfsrest api>] [-o source=<Base directory where volumes are created in the cluster>] glustervolume
 
 $ docker volume create -d orcinus/odorous:next -o servers=gfs-1:gfs-2:gfs-3 -o rest=http://gfs-1:9000 -o source=/var/lib/gluster/volumes glustervolumes
 $ docker volume ls
