@@ -1,5 +1,5 @@
 PLUGIN_NAME=orcinus/odorous
-PLUGIN_TAG=next
+PLUGIN_TAG=0.1.1
 
 all: clean docker rootfs create
 

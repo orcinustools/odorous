@@ -1,14 +1,18 @@
 ---
   language: go
-  sudo: false
+  sudo: required
+  services:
+    - docker
   notifications:
-    email: false
+    email: anak10thn@gmail.com
   go:
     - 1.6.x
     - 1.7.x
     - master
   install:
     - go get github.com/golang/lint/golint
+    - go get github.com/docker/go-plugins-helpers/volume
+    - go get github.com/orcinustools/odorous/rest
   script:
     - test -z "$(go vet ./... | grep -v vendor/ | tee /dev/stderr)"
     - test -z "$(golint ./... | grep -v vendor/ | tee /dev/stderr)"
