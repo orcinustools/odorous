@@ -1,4 +1,4 @@
-FROM pataquets/glusterfs
+FROM alpine
 
 RUN mkdir -p /run/docker/plugins /mnt/state /mnt/volumes
 

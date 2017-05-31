@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
+	// "os"
 	"path/filepath"
-	"strings"
+	// "strings"
 
 	"github.com/docker/go-plugins-helpers/volume"
 )
@@ -22,22 +22,22 @@ var (
 )
 
 func main() {
-	var Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage: %s [options]\n", os.Args[0])
-		flag.PrintDefaults()
-	}
+	// var Usage = func() {
+	// 	fmt.Fprintf(os.Stderr, "Usage: %s [options]\n", os.Args[0])
+	// 	flag.PrintDefaults()
+	// }
 
 	flag.Parse()
-	if len(*serversList) == 0 {
-		Usage()
-		os.Exit(1)
-	}
+	// if len(*serversList) == 0 {
+	// 	Usage()
+	// 	os.Exit(1)
+	// }
 
-	servers := strings.Split(*serversList, ":")
+	// servers := strings.Split(*serversList, ":")
 
-	d := newGlusterfsDriver(*root, *restAddress, *gfsBase, servers)
-
+	// d := newGlusterfsDriver(*root, *restAddress, *gfsBase, servers)
+	d := newGlusterfsDriver(*root)
 	h := volume.NewHandler(d)
-	fmt.Println(h.ServeUnix("root", "glusterfs"))
-	//fmt.Println(h.ServeUnix(socketAddress, 0))
+	// fmt.Println(h.ServeUnix("root", "glusterfs"))
+	fmt.Println(h.ServeUnix(socketAddress, 0))
 }

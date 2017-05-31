@@ -23,18 +23,29 @@ type glusterfsDriver struct {
 	restClient *rest.Client
 	statePath  []string
 	volumes    map[string]*volumeName
+	restAddress	string
+	gfsBase		string
 	m          *sync.Mutex
 }
 
-func newGlusterfsDriver(root, restAddress, gfsBase string, servers []string) glusterfsDriver {
+// func newGlusterfsDriver(root, restAddress, gfsBase string, servers []string) glusterfsDriver {
+// 	d := glusterfsDriver{
+// 		root:    root,
+// 		statePath: servers,
+// 		volumes: map[string]*volumeName{},
+// 		m:       &sync.Mutex{},
+// 	}
+// 	if len(restAddress) > 0 {
+// 		d.restClient = rest.NewClient(restAddress, gfsBase)
+// 	}
+// 	return d
+// }
+
+func newGlusterfsDriver(root string) glusterfsDriver {
 	d := glusterfsDriver{
 		root:    root,
-		statePath: servers,
 		volumes: map[string]*volumeName{},
 		m:       &sync.Mutex{},
-	}
-	if len(restAddress) > 0 {
-		d.restClient = rest.NewClient(restAddress, gfsBase)
 	}
 	return d
 }
@@ -44,6 +55,25 @@ func (d glusterfsDriver) Create(r volume.Request) volume.Response {
 	d.m.Lock()
 	defer d.m.Unlock()
 	m := d.mountpoint(r.Name)
+
+	// add for options
+	for key, val := range r.Options {
+		switch key {
+		case "servers":
+			servers := strings.Split(val, ":")
+			d.statePath = servers
+		case "rest":
+			d.restAddress = val
+		case "source":
+			d.gfsBase = val
+		default:
+			return responseError(fmt.Sprintf("unknown option %q", val))
+		}
+	}
+
+	if len(d.restAddress) > 0 {
+		d.restClient = rest.NewClient(d.restAddress, d.gfsBase)
+	}
 
 	if _, ok := d.volumes[m]; ok {
 		return volume.Response{}
@@ -196,4 +226,8 @@ func (d glusterfsDriver) Capabilities(r volume.Request) volume.Response {
     var res volume.Response
     res.Capabilities = volume.Capability{Scope: "local"}
     return res
+}
+
+func responseError(err string) volume.Response {
+	return volume.Response{Err: err}
 }
