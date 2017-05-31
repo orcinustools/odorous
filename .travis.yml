@@ -1,8 +1,5 @@
 ---
   language: go
-  sudo: required
-  services:
-    - docker
   notifications:
     email: anak10thn@gmail.com
   go:
@@ -17,4 +14,3 @@
     - test -z "$(go vet ./... | tee /dev/stderr)"
     - test -z "$(golint ./... | tee /dev/stderr)"
     - go list ./... | go test -v
-    - make push
