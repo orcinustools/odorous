@@ -61,6 +61,7 @@ func (d glusterfsDriver) Create(r volume.Request) volume.Response {
 		switch key {
 		case "servers":
 			servers := strings.Split(val, ":")
+			fmt.Println(servers)
 			d.statePath = servers
 		case "rest":
 			d.restAddress = val
